@@ -1,0 +1,47 @@
+Hier sind die Vorlagen für die API-Bodys deiner 11 Skripte. Du kannst sie dir direkt in dein Dokument kopieren:
+
+1. Webserver Ausfall
+Titel: Hilfe, die interne Webseite lädt nicht mehr!
+Text: "Hallo Support-Team, seit heute Morgen bekomme ich nur noch eine Fehlermeldung, wenn ich unser Intranet aufrufen will. Gestern ging noch alles problemlos. Könnt ihr das bitte schnell prüfen?"
+
+2. User Login gesperrt
+Titel: Komme nicht mehr in mein Konto (Terminal schließt sich)
+Text: "Hallo zusammen, mein Passwort wird anscheinend akzeptiert, aber das Terminal wirft mich sofort wieder raus. Wurde mein Account versehentlich deaktiviert?"
+
+3. DNS Sabotage
+Titel: Das ganze Internet ist kaputt!
+Text: "Hallo, ich kann keine Webseiten mehr aufrufen! Wenn ich google.ch eingebe, passiert gar nichts. Ein Kollege meinte gerade, er kann IPs anpingen, aber Namen gehen nicht. Ich bin kein Techniker, bitte helft mir!"
+
+4. fstab zerstört (Emergency Mode)
+Titel: Server startet nicht mehr (Schwarzer Bildschirm)
+Text: "Moin, der Test-Server hängt beim Hochfahren fest. Da steht irgendwas von 'Emergency Mode' und 'Press Enter for maintenance'. Ich hab mich nicht getraut, was zu drücken, nicht dass was gelöscht wird."
+
+5. SSH-Zugang blockiert (Port verstellt)
+Titel: Verbindung verweigert bei SSH
+Text: "Hallo Support, ich versuche seit einer halben Stunde mich per SSH auf die Maschine zu verbinden, aber ich bekomme immer nur 'Connection refused'. Laufen die Server überhaupt noch?"
+
+6. Docker Restart-Loop
+Titel: Die App stürzt ständig ab (Docker)
+Text: "Hi, mein Docker-Container für das neue Projekt startet zwar kurz, bricht dann aber sofort wieder ab. Er hängt in einem Restart-Loop. Ich habe absolut nichts am Code geändert, versprochen!"
+
+7. KI-Dienst offline (Ollama)
+Titel: Die lokale KI antwortet nicht mehr
+Text: "Hallo, wir wollten gerade unsere Prompts testen, aber das lokale Modell gibt uns immer einen Timeout. Ist der Server überlastet oder läuft Ollama im Hintergrund nicht mehr?"
+
+8. Systemzeit verstellt (Zertifikats-Chaos)
+Titel: Sicherheitswarnungen im Browser / Hackangriff?
+Text: "Hallo! Egal welche HTTPS-Seite ich aufrufen will, mein Browser sagt 'Ihre Verbindung ist nicht privat' oder 'Zertifikat ungültig'. Wurden wir gehackt oder liegt das an unserem Netzwerk?"
+
+9. Manipulierte Hosts-Datei
+Titel: Intranet-Seite wird nicht gefunden
+Text: "Hallo IT, ich kann ganz normal im Internet surfen, aber wenn ich 'intranet.aipplus.local' eingebe, sagt der Browser, die Seite existiert nicht. Bei meiner Kollegin nebenan geht es aber ohne Probleme."
+
+10. Sudo-Rechte entzogen
+Titel: Ich darf nichts mehr installieren
+Text: "Moin, ich wollte gerade die System-Updates fahren, aber Linux sagt mir plötzlich, ich sei nicht in der 'sudoers file'. Dieser Vorfall wird angeblich gemeldet. Wer hat mir meine Admin-Rechte geklaut?"
+
+11. Kommandozeilen Sabotage (.bashrc)
+Titel: Mein Terminal spinnt komplett
+Text: "Hilfe, jedes Mal wenn ich den ganz normalen 'ls' Befehl für meine Ordner eintippe, kommt 'Zugriff verweigert: Systemfehler 0x88'. Ich habe nichts kaputt gemacht, das war nach dem Login plötzlich so!"
+
+Diese Texte kannst du später exakt so in den body:-Teil deiner Ansible-Skripte einfügen.

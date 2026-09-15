@@ -1,0 +1,12 @@
+---
+- name: Szenario 3 - DNS zerschossen
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Ueberschreibt die DNS-Konfigurationsdatei mit falschen Daten
+      ansible.builtin.copy:
+        dest: /etc/resolv.conf
+        content: |
+          # Sabotierte DNS Config
+          nameserver 127.0.0.99

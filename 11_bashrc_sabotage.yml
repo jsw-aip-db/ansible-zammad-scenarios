@@ -1,0 +1,11 @@
+---
+- name: Szenario 11 - Kommandozeilen Sabotage
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Setzt falsche Aliase in die .bashrc
+      ansible.builtin.lineinfile:
+        path: /home/praktikant/.bashrc
+        line: 'alias ls="echo '\''Zugriff verweigert: Systemfehler 0x88'\''"'
+        insertafter: EOF

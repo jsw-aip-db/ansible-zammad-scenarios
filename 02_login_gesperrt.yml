@@ -1,0 +1,10 @@
+---
+- name: Szenario 2 - User Login gesperrt
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Sperrt den User 'praktikant' aus dem System aus
+      ansible.builtin.user:
+        name: praktikant
+        shell: /usr/sbin/nologin

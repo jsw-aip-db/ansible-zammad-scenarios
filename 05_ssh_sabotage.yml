@@ -1,0 +1,16 @@
+---
+- name: Szenario 5 - SSH-Zugang blockiert
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Aendert den SSH-Port von 22 auf 22222
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?Port'
+        line: 'Port 22222'
+
+    - name: Startet den SSH-Dienst neu, um die Aenderung zu aktivieren
+      ansible.builtin.service:
+        name: ssh
+        state: restarted

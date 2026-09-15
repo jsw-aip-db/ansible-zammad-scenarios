@@ -1,0 +1,33 @@
+zammad_api_vorlage.txt
+
+---
+- name: Szenario 1 - Webserver Ausfall
+  hosts: ziel_vm
+  become: yes 
+  
+  tasks:
+    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+        enabled: no
+
+    # --- HIER STARTET DER NEUE API TEIL ---
+    - name: Erstelle Ticket in Zammad via API
+      ansible.builtin.uri:
+        url: "http://<IP_VON_ZAMMAD>/api/v1/tickets"
+        method: POST
+        headers:
+          Authorization: "Token token=<DEIN_API_TOKEN>"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          title: "Hilfe, die interne Webseite lädt nicht mehr!"
+          group: "Users"
+          customer: "lernender@aipplus.local"
+          article:
+            subject: "Webserver down"
+            body: "Hallo Support-Team, seit meinem Login heute Morgen erreiche ich das Intranet nicht mehr. Könnt ihr das prüfen?"
+            type: "web"
+            internal: false
+        status_code: 201

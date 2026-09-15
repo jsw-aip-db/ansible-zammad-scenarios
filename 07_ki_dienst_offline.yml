@@ -1,0 +1,11 @@
+---
+- name: Szenario 7 - KI-Dienst offline (Ollama)
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Stoppt den Ollama-Dienst
+      ansible.builtin.service:
+        name: ollama
+        state: stopped
+        enabled: no # Verhindert, dass es nach einem Neustart wieder läuft

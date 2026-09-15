@@ -1,0 +1,11 @@
+---
+- name: Szenario 1 - Webserver Ausfall
+  hosts: ziel_vm
+  become: yes # Sagt Ansible, dass es Admin-Rechte (sudo) nutzen soll
+  
+  tasks:
+    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+        enabled: no

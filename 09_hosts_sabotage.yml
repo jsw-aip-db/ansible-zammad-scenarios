@@ -1,0 +1,11 @@
+---
+- name: Szenario 9 - Manipulierte Hosts-Datei
+  hosts: ziel_vm
+  become: yes
+  
+  tasks:
+    - name: Leitet wichtige Domains lokal ins Nichts um
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: '127.0.0.1 intranet.aipplus.local zammad.aipplus.local'
+        insertafter: EOF
