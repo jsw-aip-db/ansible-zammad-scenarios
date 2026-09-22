@@ -5,7 +5,8 @@
 
   tasks:
     - name: Startet den Nginx Webserver und aktiviert den Autostart
-      ansible.builtin.service:
+      ansible.builtin.systemd:
         name: nginx
         state: started
         enabled: yes
+        daemon_reload: yes
