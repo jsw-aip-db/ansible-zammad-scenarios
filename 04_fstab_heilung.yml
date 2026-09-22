@@ -1,0 +1,10 @@
+---
+- name: Szenario 4 - Fstab Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Fstab auf Standard zurücksetzen und Mounts neu laden
+      ansible.builtin.shell: |
+        mount -a
+        systemctl daemon-reload
