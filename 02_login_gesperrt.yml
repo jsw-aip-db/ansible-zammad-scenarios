@@ -1,10 +1,9 @@
 ---
-- name: Szenario 2 - User Login gesperrt
+- name: Szenario 2 - Login Sabotage (User sperren)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Sperrt den User 'praktikant' aus dem System aus
-      ansible.builtin.user:
-        name: praktikant
-        shell: /usr/sbin/nologin
+    - name: Account sperren durch ungültige Login-Versuche oder usermod
+      ansible.builtin.shell: |
+        passwd -l user || true
