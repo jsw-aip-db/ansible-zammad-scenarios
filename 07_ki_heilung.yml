@@ -1,0 +1,10 @@
+---
+- name: Szenario 5 - SSH Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: SSH-Dienst neu starten und aktivieren
+      ansible.builtin.shell: |
+        systemctl unmask ssh || true
+        systemctl start ssh &
