@@ -4,8 +4,7 @@
   become: yes
 
   tasks:
-    - name: Nginx direkt über die Shell starten und Autostart aktivieren
+    - name: Nginx Service hart erzwingen und starten
       ansible.builtin.shell: |
-        systemctl unmask nginx
+        systemctl reset-failed
         systemctl start nginx
-        systemctl enable nginx
