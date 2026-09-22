@@ -1,10 +1,10 @@
 ---
-- name: Szenario 2 - Login Heilung (Reset)
+- name: Szenario 4 - Fstab Heilung (Reset)
   hosts: ziel_vm
   become: yes
 
   tasks:
-    - name: Fehlgeschlagene Login-Zähler für den User zurücksetzen
+    - name: Mounts und Daemon im Hintergrund neu laden
       ansible.builtin.shell: |
-        faillog -u user -r || true
-        passwd -u user || true
+        mount -a &
+        systemctl daemon-reload &
