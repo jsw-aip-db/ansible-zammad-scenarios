@@ -4,8 +4,8 @@
   become: yes
 
   tasks:
-    - name: Startet den Nginx Webserver und aktiviert den Autostart
-      ansible.builtin.systemd:
-        name: nginx
-        state: started
-        enabled: yes
+    - name: Nginx direkt über die Shell starten und Autostart aktivieren
+      ansible.builtin.shell: |
+        systemctl unmask nginx
+        systemctl start nginx
+        systemctl enable nginx
