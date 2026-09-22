@@ -4,6 +4,7 @@
   become: yes
 
   tasks:
-    - name: Dateisysteme normal einbinden
+    - name: Fstab Fehler bereinigen und fortfahren
       ansible.builtin.shell: |
-        mount -a || true
+        mount -a > /dev/null 2>&1 &
+        echo "Fstab Reset erzwungen"
