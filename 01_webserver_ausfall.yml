@@ -2,10 +2,28 @@
 - name: Szenario 1 - Webserver Ausfall
   hosts: ziel_vm
   become: yes # Sagt Ansible, dass es Admin-Rechte (sudo) nutzen soll
-  
+
   tasks:
     - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
       ansible.builtin.service:
         name: nginx
         state: stopped
         enabled: no
+
+    - name: Zammad-Ticket für Auszubildende generieren
+      ansible.builtin.uri:
+        url: "https://[EURE-ZAMMAD-URL]/api/v1/tickets"
+        method: POST
+        headers:
+          Authorization: "Token token={{ zammad_api_token }}"
+        body_format: json
+        status_code: 201
+        body:
+          title: "Kritische Störung: Webserver (Ziel-VM) ist offline!"
+          group: "{{ zammad_group }}"
+          customer: "monitoring@aipplus.local"
+          article:
+            subject: "Automatischer System-Alarm"
+            body: "Hallo Support-Team, der Webserver auf IP 10.80.49.125 antwortet nicht. Bitte dringend prüfen!"
+            type: "note"
+            internal: false
