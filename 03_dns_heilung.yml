@@ -1,0 +1,10 @@
+---
+- name: Szenario 3 - DNS Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Korrekten DNS-Server in resolv.conf schreiben
+      ansible.builtin.shell: |
+        echo "nameserver 1.1.1.1" > /etc/resolv.conf
+        systemctl restart NetworkManager || true
