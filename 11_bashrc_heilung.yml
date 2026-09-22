@@ -1,0 +1,9 @@
+---
+- name: Szenario 11 - Bashrc Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Standard-Umgebungsvariablen und Pfade reparieren
+      ansible.builtin.shell: |
+        echo "export PATH=\$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/user/.bashrc
