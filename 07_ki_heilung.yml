@@ -1,10 +1,9 @@
 ---
-- name: Szenario 5 - SSH Heilung (Reset)
+- name: Szenario 7 - KI-Dienst Heilung (Reset)
   hosts: ziel_vm
   become: yes
 
   tasks:
-    - name: SSH-Dienst neu starten und aktivieren
+    - name: KI-Dienst oder Ollama Service starten
       ansible.builtin.shell: |
-        systemctl unmask ssh || true
-        systemctl start ssh &
+        systemctl restart ollama || docker start ollama &
