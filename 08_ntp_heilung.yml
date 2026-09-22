@@ -1,0 +1,10 @@
+---
+- name: Szenario 8 - NTP Zeit Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Zeitsynchronisation erzwingen
+      ansible.builtin.shell: |
+        timedatectl set-ntp on
+        systemctl restart systemd-timesyncd &
