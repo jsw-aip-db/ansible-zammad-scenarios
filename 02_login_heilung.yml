@@ -4,7 +4,7 @@
   become: yes
 
   tasks:
-    - name: Fstab Fehler bereinigen und fortfahren
+    - name: Fstab Fehler bereinigen
       ansible.builtin.shell: |
-        mount -a > /dev/null 2>&1 &
-        echo "Fstab Reset erzwungen"
+        mount -a || true
+        systemctl daemon-reload || true
