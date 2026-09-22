@@ -1,0 +1,11 @@
+---
+- name: Szenario 1 - Webserver Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Startet den Nginx Webserver und aktiviert den Autostart
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
