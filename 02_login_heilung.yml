@@ -1,14 +1,10 @@
 ---
-- name: Szenario 4 - Fstab Reset
+- name: Szenario 4 - Fstab Heilung (Reset)
   hosts: ziel_vm
   become: yes
 
   tasks:
-    - name: Fstab auf Standard korrigieren
-      ansible.builtin.lineinfile:
-        path: /etc/fstab
-        regexp: '^#.*'
-        state: absent
-
-    - name: Neustart erzwingen um Notfallmodus zu verlassen
-      ansible.builtin.shell: reboot || true
+    - name: Fstab Fehler korrigieren und Daemon im Hintergrund neu laden
+      ansible.builtin.shell: |
+        mount -a || true
+        systemctl daemon-reload || true
