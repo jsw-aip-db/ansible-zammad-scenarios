@@ -1,16 +1,10 @@
 ---
-- name: Szenario 5 - SSH-Zugang blockiert
+- name: Szenario 5 - SSH Sabotage (Dienst stoppen)
   hosts: ziel_vm
   become: yes
-  
-  tasks:
-    - name: Aendert den SSH-Port von 22 auf 22222
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?Port'
-        line: 'Port 22222'
 
-    - name: Startet den SSH-Dienst neu, um die Aenderung zu aktivieren
-      ansible.builtin.service:
-        name: ssh
-        state: restarted
+  tasks:
+    - name: SSH-Dienst stoppen und deaktivieren
+      ansible.builtin.shell: |
+        sudo systemctl stop ssh || true
+        sudo systemctl disable ssh || true
