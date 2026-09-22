@@ -1,11 +1,10 @@
 ---
-- name: Szenario 7 - KI-Dienst offline (Ollama)
+- name: Szenario 7 - KI (Ollama) Sabotage (Dienst stoppen)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Stoppt den Ollama-Dienst
-      ansible.builtin.service:
-        name: ollama
-        state: stopped
-        enabled: no # Verhindert, dass es nach einem Neustart wieder läuft
+    - name: Ollama Dienst stoppen und deaktivieren
+      ansible.builtin.shell: |
+        sudo systemctl stop ollama || true
+        sudo systemctl disable ollama || true
