@@ -1,11 +1,9 @@
 ---
-- name: Szenario 4 - Zerstörung der fstab (Emergency Mode)
+- name: Szenario 4 - Fstab Sabotage (Emergency Mode)
   hosts: ziel_vm
   become: yes
-  
-  tasks:
-    - name: Sichert die fstab als Backup und leert die aktive Datei
-      ansible.builtin.shell: cp /etc/fstab /etc/fstab.bak && echo "# Zerstört durch Ansible" > /etc/fstab
 
-    - name: Erzwingt einen sofortigen Neustart (führt zum Emergency Mode)
-      ansible.builtin.reboot:
+  tasks:
+    - name: Fehlerhaften Mount-Eintrag in fstab schreiben
+      ansible.builtin.shell: |
+        sudo bash -c 'echo "/dev/nonexistent /mnt/ungueltig ext4 defaults 0 0" >> /etc/fstab'
