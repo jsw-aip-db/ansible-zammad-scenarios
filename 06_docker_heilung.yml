@@ -1,0 +1,10 @@
+---
+- name: Szenario 6 - Docker Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Docker-Dienst bereinigen und neu starten
+      ansible.builtin.shell: |
+        docker stop $(docker ps -a -q) || true
+        systemctl restart docker &
