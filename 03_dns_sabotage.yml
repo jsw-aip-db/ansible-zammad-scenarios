@@ -4,6 +4,8 @@
   become: yes
 
   tasks:
-    - name: Ungültigen DNS-Server eintragen
+    - name: Ungültigen DNS-Server erzwingen
       ansible.builtin.shell: |
+        chattr -i /etc/resolv.conf || true
+        rm -f /etc/resolv.conf || true
         echo "nameserver 10.99.99.99" > /etc/resolv.conf
