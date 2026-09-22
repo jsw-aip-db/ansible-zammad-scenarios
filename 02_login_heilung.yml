@@ -4,7 +4,6 @@
   become: yes
 
   tasks:
-    - name: Mounts und Daemon im Hintergrund neu laden
+    - name: Dateisysteme normal einbinden
       ansible.builtin.shell: |
-        mount -a &
-        systemctl daemon-reload &
+        mount -a || true
