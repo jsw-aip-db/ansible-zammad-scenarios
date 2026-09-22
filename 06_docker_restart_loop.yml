@@ -1,11 +1,10 @@
 ---
-- name: Szenario 6 - Docker Volume Rechte-Fehler
+- name: Szenario 6 - Docker Sabotage (Dienst stoppen / Loop)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Entzieht die Lese- und Schreibrechte fuer ein fiktives Docker-Volume
-      ansible.builtin.file:
-        path: /var/lib/docker/volumes/
-        mode: '0000' # Niemand darf mehr lesen oder schreiben
-        recurse: yes
+    - name: Docker-Dienst stoppen und deaktivieren
+      ansible.builtin.shell: |
+        sudo systemctl stop docker || true
+        sudo systemctl disable docker || true
