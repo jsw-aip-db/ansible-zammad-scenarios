@@ -1,0 +1,10 @@
+---
+- name: Szenario 10 - Sudo-Rechte Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Sudoers-Datei für den Ansible-User neu anlegen
+      ansible.builtin.shell: |
+        echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/ansible
+        chmod 0440 /etc/sudoers.d/ansible
