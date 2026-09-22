@@ -4,7 +4,9 @@
   become: yes
 
   tasks:
-    - name: Fstab Fehler bereinigen
-      ansible.builtin.shell: |
-        mount -a || true
-        systemctl daemon-reload || true
+    - name: Mounts aktualisieren
+      ansible.builtin.shell: mount -a || true
+
+    - name: Systemd Daemon neu laden (nativ)
+      ansible.builtin.systemd:
+        daemon_reload: yes
