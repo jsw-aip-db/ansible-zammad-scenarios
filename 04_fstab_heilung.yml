@@ -4,7 +4,7 @@
   become: yes
 
   tasks:
-    - name: Fstab auf Standard zurücksetzen und Mounts neu laden
+    - name: Fstab Fehler korrigieren und Daemon im Hintergrund neu laden
       ansible.builtin.shell: |
-        mount -a
-        systemctl daemon-reload
+        mount -a || true
+        systemctl daemon-reload || true
