@@ -1,0 +1,10 @@
+---
+- name: Szenario 2 - Login Heilung (Reset)
+  hosts: ziel_vm
+  become: yes
+
+  tasks:
+    - name: Fail2ban oder PAM-Sperren zurücksetzen
+      ansible.builtin.shell: |
+        fail2ban-client unban --all || true
+        pam-auth-update --package
