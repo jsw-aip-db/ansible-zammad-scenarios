@@ -4,7 +4,5 @@
   become: yes
 
   tasks:
-    - name: Nginx Service hart erzwingen und starten
-      ansible.builtin.shell: |
-        systemctl reset-failed
-        systemctl start nginx
+    - name: Nginx im Hintergrund starten
+      ansible.builtin.shell: systemctl start nginx &
