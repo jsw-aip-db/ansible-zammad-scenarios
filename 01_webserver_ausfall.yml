@@ -10,7 +10,7 @@
         state: stopped
         enabled: no
 
-    - name: Ticket via Zammad HTTP API erstellen
+    - name: Ticket via Zammad API direkt von der VM senden
       ansible.builtin.uri:
         url: "http://10.86.100.116:8080/api/v1/tickets"
         method: POST
@@ -21,9 +21,7 @@
           customer: "support@aip-test.ch"
           article:
             subject: "Automatischer Alarm: Webserver ausgefallen"
-            body: "Das automatische Monitoring meldet: Der Webserver auf 10.80.49.125 ist unerreichbar."
+            body: "Das automatische Monitoring meldet: Der Webserver auf dieser Maschine (10.80.49.125) ist unerreichbar."
             type: "web"
             sender: "System"
         status_code: 201
-      delegate_to: localhost
-      become: no
