@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Webserver Ausfall mit Live-Broadcast
+- name: Szenario 1 - Webserver Ausfall mit grafischem Terminal-Popup
   hosts: ziel_vm
   become: yes
   
@@ -10,20 +10,23 @@
         state: stopped
         enabled: no
 
-    - name: Live-Warnung sofort an alle offenen Terminals senden
+    - name: Öffne ein neues Terminalfenster mit dem Alarm auf dem Desktop
+      become_user: user
+      environment:
+        DISPLAY: ":0.0"
+        XAUTHORITY: "/home/user/.Xauthority"
       ansible.builtin.shell: |
-        wall << "EOF"
-        ====================================================================
-        🔴 CRITICAL INCIDENT ALERT - TICKET #1024
-        ====================================================================
-        System:     10.80.49.125
-        Dienst:     Nginx Webserver (AUSGEFALLEN)
-        Schweregrad: HOCH
-        
-        Das Überwachungssystem hat soeben einen Totalausfall detektiert.
-        Der Dienst wurde gestoppt und der Autostart deaktiviert.
-        
-        AUFGABE: 
-        Analysieren Sie das Problem und stellen Sie den Dienst wieder her!
-        ====================================================================
-        EOF
+        gnome-terminal -- bash -c '
+          echo -e "\033[1;31m====================================================================\033[0m"
+          echo -e "\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m"
+          echo -e "\033[1;31m====================================================================\033[0m"
+          echo " System:     10.80.49.125"
+          echo " Dienst:     Nginx Webserver (Gestoppt)"
+          echo ""
+          echo " AUFGABE: Analysieren Sie das Problem und beheben Sie den Ausfall!"
+          echo -e "\033[1;31m====================================================================\033[0m"
+          echo ""
+          echo "Drücke Enter, um dieses Terminal für die Diagnose zu nutzen..."
+          read
+        '
+      ignore_errors: yes
