@@ -34,7 +34,7 @@
 
     - name: "Weg 1: Test - E-Mail an zentralen Mailserver senden (mit starttls)"
       ansible.builtin.mail:
-        host: "mail.unternehmens-domain.ch"  # Hier ggf. die echte Mailserver-IP oder Domain eintragen
+        host: "support@aip-test.ch"  # ier ggf. die echte Mailserver-IP oder Domain eintragen
         port: 587
         secure: starttls
         from: "aip-labor@aip-lab.ch"
