@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Test Weg 1 (Mail mit StartTLS)
+- name: Szenario 1 - Webserver Ausfall (VM Sabotage & Desktop Popup)
   hosts: ziel_vm
   become: yes
   
@@ -32,13 +32,25 @@
       async: 10
       poll: 0
 
-    - name: "Weg 1: Test - E-Mail an zentralen Mailserver senden (mit starttls)"
-      ansible.builtin.mail:
-        host: "support@aip-test.ch"  # ier ggf. die echte Mailserver-IP oder Domain eintragen
-        port: 587
-        secure: starttls
-        from: "aip-labor@aip-lab.ch"
-        to: "support@aip-test.ch"
-        subject: "[LABOR-ALERT] Nginx Ausfall auf 10.80.49.125"
-        body: "Automatisierter Labor-Vorfall: Webserver gestoppt."
+- name: Szenario 1 - Ticket bei Zammad via Semaphore anlegen
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Zammad API-Call direkt vom Semaphore-Server senden
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body:
+          title: "Webserver Ausfall auf 10.80.49.125"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Labor-Alarm Szenario 1"
+            body: "Der Nginx Webserver auf 10.80.49.125 wurde im Rahmen des ICT-Support-Labors gestoppt."
+        status_code: [200, 201]
       ignore_errors: yes
