@@ -1,10 +1,9 @@
 ---
-- name: Szenario 9 - Hosts Datei Heilung (Reset)
+- name: Szenario 9 - Hosts Heilung (Reset)
   hosts: ziel_vm
   become: yes
 
   tasks:
-    - name: Standard-Einträge in hosts wiederherstellen
+    - name: Standard /etc/hosts wiederherstellen
       ansible.builtin.shell: |
-        echo "127.0.0.1 localhost" > /etc/hosts
-        echo "127.0.1.1 user-Standard-PC" >> /etc/hosts
+        sudo bash -c 'echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback" > /etc/hosts'
