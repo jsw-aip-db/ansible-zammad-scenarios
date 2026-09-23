@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Webserver Ausfall mit Terminal-Alert
+- name: Szenario 1 - Webserver Ausfall mit Live-Broadcast
   hosts: ziel_vm
   become: yes
   
@@ -10,15 +10,20 @@
         state: stopped
         enabled: no
 
-    - name: Alarm-Skript im Profil hinterlegen, damit es beim Login poppt
-      ansible.builtin.blockinfile:
-        path: "/home/user/.bashrc"
-        marker: "# {mark} ANSIBLE INCIDENT ALERT"
-        block: |
-          echo -e "\n\033[1;31m====================================================================\033[0m"
-          echo -e "\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m"
-          echo -e "\033[1;31m====================================================================\033[0m"
-          echo -e " System:     10.80.49.125"
-          echo -e " Dienst:     Nginx Webserver (Gestoppt / Autostart aus)"
-          echo -e " Aufgabe:    Analysieren, beheben und Dienst wiederherstellen!"
-          echo -e "\033[1;31m====================================================================\033[0m\n"
+    - name: Live-Warnung sofort an alle offenen Terminals senden
+      ansible.builtin.shell: |
+        wall << "EOF"
+        ====================================================================
+        🔴 CRITICAL INCIDENT ALERT - TICKET #1024
+        ====================================================================
+        System:     10.80.49.125
+        Dienst:     Nginx Webserver (AUSGEFALLEN)
+        Schweregrad: HOCH
+        
+        Das Überwachungssystem hat soeben einen Totalausfall detektiert.
+        Der Dienst wurde gestoppt und der Autostart deaktiviert.
+        
+        AUFGABE: 
+        Analysieren Sie das Problem und stellen Sie den Dienst wieder her!
+        ====================================================================
+        EOF
