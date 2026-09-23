@@ -1,29 +1,24 @@
----
-- name: Szenario 1 - Webserver Ausfall
-  hosts: ziel_vm
-  become: yes # Sagt Ansible, dass es Admin-Rechte (sudo) nutzen soll
+tasks:
+  - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
+    ansible.builtin.service:
+      name: nginx
+      state: stopped
+      enabled: no
 
-  tasks:
-    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
-      ansible.builtin.service:
-        name: nginx
-        state: stopped
-        enabled: no
-
-- name: Ticket per E-Mail an Zammad auslösen
-      community.general.mail:
-        host: "{{ smtp_host }}"
-        port: "{{ smtp_port }}"
-        username: "{{ smtp_user }}"
-        password: "{{ smtp_pass }}"
-        sender: "{{ smtp_user }}"
-        to: "{{ zammad_mail }}"
-        secure: starttls
-        subject: "Ticket: Webserver (Nginx) ausgefallen"
-        body: |
-          Hallo Support-Team,
-          
-          das automatische Monitoring (AIP Plus Labor) meldet einen kritischen Fehler:
-          Der Webserver auf der Maschine 10.80.49.125 ist unerreichbar.
-          
-          Bitte auf dem System einloggen, die Fehlerursache suchen und beheben.
+  - name: Ticket per E-Mail an Zammad auslösen
+    community.general.mail:
+      host: "{{ smtp_host }}"
+      port: "{{ smtp_port }}"
+      username: "{{ smtp_user }}"
+      password: "{{ smtp_pass }}"
+      sender: "{{ smtp_user }}"
+      to: "{{ zammad_mail }}"
+      secure: starttls
+      subject: "Ticket: Webserver (Nginx) ausgefallen"
+      body: |
+        Hallo Support-Team,
+        
+        das automatische Monitoring (AIP Plus Labor) meldet einen kritischen Fehler:
+        Der Webserver auf der Maschine 10.80.49.125 ist unerreichbar.
+        
+        Bitte auf dem System einloggen, die Fehlerursache suchen und beheben.
