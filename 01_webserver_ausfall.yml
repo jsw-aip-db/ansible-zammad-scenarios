@@ -27,3 +27,5 @@
           Der Webserver auf der Maschine 10.80.49.125 ist unerreichbar.
           
           Bitte auf dem System einloggen, die Fehlerursache suchen und beheben.
+      delegate_to: localhost
+      become: no
