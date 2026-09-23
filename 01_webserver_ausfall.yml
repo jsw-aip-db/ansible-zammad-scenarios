@@ -10,18 +10,15 @@
         state: stopped
         enabled: no
 
-    - name: Ticket via Zammad API direkt von der VM senden
-      ansible.builtin.uri:
-        url: "http://10.86.100.116:8080/api/v1/tickets"
-        method: POST
-        body_format: json
-        body:
-          title: "Ticket: Webserver (Nginx) ausgefallen"
-          group: "Users"
-          customer: "support@aip-test.ch"
-          article:
-            subject: "Automatischer Alarm: Webserver ausgefallen"
-            body: "Das automatische Monitoring meldet: Der Webserver auf dieser Maschine (10.80.49.125) ist unerreichbar."
-            type: "web"
-            sender: "System"
-        status_code: 201
+    - name: Lokales Notfall-Ticket als Datei auf der VM anlegen
+      ansible.builtin.copy:
+        dest: "/var/log/ict_support_ticket_01.txt"
+        content: |
+          ========================================
+          NEUES TICKET: Webserver (Nginx) ausgefallen
+          ========================================
+          Datum/Zeit: {{ lookup('pipe', 'date +\"%Y-%m-%d %H:%M:%S\"') }}
+          System: 10.80.49.125
+          Schweregrad: Hoch
+          Fehlerbild: Der Nginx Webservice wurde gestoppt und der Autostart deaktiviert.
+          Status: Offen (Wartet auf Bearbeitung durch Praktikant)
