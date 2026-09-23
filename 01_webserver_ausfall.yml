@@ -10,20 +10,20 @@
         state: stopped
         enabled: no
 
-    - name: Zammad-Ticket für Auszubildende generieren
-      ansible.builtin.uri:
-        url: "https://[EURE-ZAMMAD-URL]/api/v1/tickets"
-        method: POST
-        headers:
-          Authorization: "Token token={{ zammad_api_token }}"
-        body_format: json
-        status_code: 201
-        body:
-          title: "Kritische Störung: Webserver (Ziel-VM) ist offline!"
-          group: "{{ zammad_group }}"
-          customer: "monitoring@aipplus.local"
-          article:
-            subject: "Automatischer System-Alarm"
-            body: "Hallo Support-Team, der Webserver auf IP 10.80.49.125 antwortet nicht. Bitte dringend prüfen!"
-            type: "note"
-            internal: false
+- name: Ticket per E-Mail an Zammad auslösen
+      community.general.mail:
+        host: "{{ smtp_host }}"
+        port: "{{ smtp_port }}"
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_pass }}"
+        sender: "{{ smtp_user }}"
+        to: "{{ zammad_mail }}"
+        secure: starttls
+        subject: "Ticket: Webserver (Nginx) ausgefallen"
+        body: |
+          Hallo Support-Team,
+          
+          das automatische Monitoring (AIP Plus Labor) meldet einen kritischen Fehler:
+          Der Webserver auf der Maschine 10.80.49.125 ist unerreichbar.
+          
+          Bitte auf dem System einloggen, die Fehlerursache suchen und beheben.
