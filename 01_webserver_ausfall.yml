@@ -10,13 +10,13 @@
         state: stopped
         enabled: no
 
-    - name: Öffne XFCE-Terminal im Hintergrund und beende den Task sauber
+    - name: Öffne XFCE-Terminal im Hintergrund ohne Blockierung
       become_user: user
       environment:
         DISPLAY: ":0.0"
         XAUTHORITY: "/home/user/.Xauthority"
       ansible.builtin.shell: |
-        nohup xfce4-terminal --command="bash -c '
+        xfce4-terminal --command="bash -c '
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
@@ -29,4 +29,5 @@
           echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
           read
         '" > /dev/null 2>&1 &
-        disown
+      async: 10
+      poll: 0
