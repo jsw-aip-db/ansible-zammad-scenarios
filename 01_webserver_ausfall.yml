@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Webserver Ausfall mit grafischem Terminal-Popup
+- name: Szenario 1 - Webserver Ausfall mit zentraler Zammad-Ticket Erstellung
   hosts: ziel_vm
   become: yes
   
@@ -10,7 +10,7 @@
         state: stopped
         enabled: no
 
-    - name: Öffne maximiertes XFCE-Terminal im Hintergrund ohne Blockierung
+    - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
       environment:
         DISPLAY: ":0.0"
@@ -31,3 +31,29 @@
         '" > /dev/null 2>&1 &
       async: 10
       poll: 0
+
+    - name: Ticket direkt über den Semaphore-Server an Zammad senden
+      delegate_to: localhost
+      run_once: true
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body: |
+          {
+            "title": "Kritischer Ausfall: Nginx Webserver auf 10.80.49.125",
+            "group": "Users",
+            "customer": "{{ zammad_user }}",
+            "article": {
+              "subject": "Automatisierter Labor-Alarm",
+              "body": "Das Überwachungssystem hat einen Totalausfall des Nginx Webservers auf der VM 10.80.49.125 detektiert. Dienst wurde gestoppt und Autostart deaktiviert.",
+              "content_type": "text/plain",
+              "type": "web"
+            }
+          }
+        status_code: [201, 200]
+        timeout: 10
+      register: zammad_response
+      ignore_errors: yes
