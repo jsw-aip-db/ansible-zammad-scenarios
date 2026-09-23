@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Alle 4 Zammad-Alternativwege testen
+- name: Szenario 1 - Test Weg 1 (Mail mit StartTLS)
   hosts: ziel_vm
   become: yes
   
@@ -32,57 +32,13 @@
       async: 10
       poll: 0
 
-    # --- WEG 1: IMAP / Zentraler Mailserver ---
-    - name: "Weg 1: Test - E-Mail an zentralen Mailserver senden"
+    - name: "Weg 1: Test - E-Mail an zentralen Mailserver senden (mit starttls)"
       ansible.builtin.mail:
-        host: "mail.unternehmens-domain.ch"
+        host: "mail.unternehmens-domain.ch"  # Hier ggf. die echte Mailserver-IP oder Domain eintragen
         port: 587
-        secure: tls
+        secure: starttls
         from: "aip-labor@aip-lab.ch"
         to: "support@aip-test.ch"
         subject: "[LABOR-ALERT] Nginx Ausfall auf 10.80.49.125"
         body: "Automatisierter Labor-Vorfall: Webserver gestoppt."
-      ignore_errors: yes
-
-    # --- WEG 2: Shared Storage / Drop-Folder ---
-    - name: "Weg 2: Test - Ticket-Datei in Drop-Folder schreiben"
-      ansible.builtin.copy:
-        content: |
-          SYSTEM: 10.80.49.125
-          INCIDENT: Nginx Webserver Ausfall
-          STATUS: Gestoppt
-        dest: "/tmp/zammad_ticket_drop.txt"
-      ignore_errors: yes
-
-    # --- WEG 3: Relay-Server Webhook ---
-    - name: "Weg 3: Test - Webhook an Relay-Server senden"
-      ansible.builtin.uri:
-        url: "http://10.80.10.x:8080/relay-ticket"
-        method: POST
-        body_format: json
-        body:
-          ip: "10.80.49.125"
-          dienst: "nginx"
-          status: "stopped"
-        status_code: [200, 201]
-      ignore_errors: yes
-
-    # --- WEG 4: API-Call direkt über Semaphore (localhost) ---
-    - name: "Weg 4: Test - Zammad-API direkt von Semaphore aus aufrufen"
-      delegate_to: localhost
-      run_once: true
-      ansible.builtin.uri:
-        url: "http://10.86.100.116:8080/api/v1/tickets"
-        method: POST
-        body_format: json
-        headers:
-          Content-Type: "application/json"
-        body:
-          title: "Ausfall auf 10.80.49.125"
-          group: "Users"
-          customer: "support@aip-test.ch"
-          article:
-            subject: "Labor-Alarm"
-            body: "Webserver gestoppt."
-        status_code: [200, 201]
       ignore_errors: yes
