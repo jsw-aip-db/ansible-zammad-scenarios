@@ -17,7 +17,7 @@
           ========================================
           NEUES TICKET: Webserver (Nginx) ausgefallen
           ========================================
-          Datum/Zeit: {{ lookup('pipe', 'date +\"%Y-%m-%d %H:%M:%S\"') }}
+          Datum/Zeit: {{ ansible_date_time.iso8601 }}
           System: 10.80.49.125
           Schweregrad: Hoch
           Fehlerbild: Der Nginx Webservice wurde gestoppt und der Autostart deaktiviert.
