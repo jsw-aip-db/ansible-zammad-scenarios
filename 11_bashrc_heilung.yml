@@ -4,6 +4,7 @@
   become: yes
 
   tasks:
-    - name: Standard-Umgebungsvariablen und Pfade reparieren
+    - name: Standard .bashrc wiederherstellen
       ansible.builtin.shell: |
-        echo "export PATH=\$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/user/.bashrc
+        sudo cp /etc/skel/.bashrc /home/user/.bashrc
+        sudo chown user:user /home/user/.bashrc
