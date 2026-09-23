@@ -1,11 +1,10 @@
 ---
-- name: Szenario 8 - Systemzeit in die Vergangenheit versetzt
+- name: Szenario 8 - NTP Sabotage (Zeit verstellen)
   hosts: ziel_vm
   become: yes
-  
-  tasks:
-    - name: Deaktiviert die automatische Zeitsynchronisation (NTP)
-      ansible.builtin.command: timedatectl set-ntp false
 
-    - name: Verstellt das Datum auf das Jahr 2015
-      ansible.builtin.command: timedatectl set-time '2015-01-01 12:00:00'
+  tasks:
+    - name: Zeitsynchronisation deaktivieren und Datum in die Vergangenheit setzen
+      ansible.builtin.shell: |
+        sudo timedatectl set-ntp false || true
+        sudo date -s "2020-01-01 12:00:00" || true
