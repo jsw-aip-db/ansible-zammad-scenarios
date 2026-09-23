@@ -10,22 +10,21 @@
         state: stopped
         enabled: no
 
-    - name: Ticket per E-Mail an Zammad auslösen
-      community.general.mail:
-        host: "{{ smtp_host }}"
-        port: "{{ smtp_port }}"
-        username: "{{ smtp_user }}"
-        password: "{{ smtp_pass }}"
-        sender: "{{ smtp_user }}"
-        to: "{{ zammad_mail }}"
-        secure: starttls
-        subject: "Ticket: Webserver (Nginx) ausgefallen"
-        body: |
-          Hallo Support-Team,
-          
-          das automatische Monitoring (AIP Plus Labor) meldet einen kritischen Fehler:
-          Der Webserver auf der Maschine 10.80.49.125 ist unerreichbar.
-          
-          Bitte auf dem System einloggen, die Fehlerursache suchen und beheben.
-      delegate_to: localhost
-      become: no
+    - name: Direktes Ticket in Zammad per Konsolenbefehl erzeugen
+      ansible.builtin.command: >
+        docker exec -t zammad-railsserver-1 rails runner 
+        "Ticket.create!(
+          title: 'Ticket: Webserver (Nginx) ausgefallen',
+          group: Group.find_by(name: 'Users'),
+          customer: User.find_by(email: 'support@aip-test.ch'),
+          article: Ticket::Article.new(
+            subject: 'Automatischer Alarm: Webserver ausgefallen',
+            body: 'Das automatische Monitoring meldet: Der Webserver auf 10.80.49.125 ist unerreichbar.',
+            sender: Ticket::Article::Sender.find_by(name: 'System'),
+            type: Ticket::Article::Type.find_by(name: 'web')
+          ),
+          state: Ticket::State.find_by(name: 'new'),
+          priority: Ticket::Priority.find_by(name: '2 normal')
+        )"
+      delegate_to: 10.86.100.116
+      become: yes
