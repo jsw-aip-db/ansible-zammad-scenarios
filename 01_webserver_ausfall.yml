@@ -10,21 +10,20 @@
         state: stopped
         enabled: no
 
-    - name: Direktes Ticket in Zammad per Konsolenbefehl erzeugen
-      ansible.builtin.command: >
-        docker exec -t zammad-railsserver-1 rails runner 
-        "Ticket.create!(
-          title: 'Ticket: Webserver (Nginx) ausgefallen',
-          group: Group.find_by(name: 'Users'),
-          customer: User.find_by(email: 'support@aip-test.ch'),
-          article: Ticket::Article.new(
-            subject: 'Automatischer Alarm: Webserver ausgefallen',
-            body: 'Das automatische Monitoring meldet: Der Webserver auf 10.80.49.125 ist unerreichbar.',
-            sender: Ticket::Article::Sender.find_by(name: 'System'),
-            type: Ticket::Article::Type.find_by(name: 'web')
-          ),
-          state: Ticket::State.find_by(name: 'new'),
-          priority: Ticket::Priority.find_by(name: '2 normal')
-        )"
-      delegate_to: 10.86.100.116
-      become: yes
+    - name: Ticket via Zammad HTTP API erstellen
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        body:
+          title: "Ticket: Webserver (Nginx) ausgefallen"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Automatischer Alarm: Webserver ausgefallen"
+            body: "Das automatische Monitoring meldet: Der Webserver auf 10.80.49.125 ist unerreichbar."
+            type: "web"
+            sender: "System"
+        status_code: 201
+      delegate_to: localhost
+      become: no
