@@ -1,11 +1,9 @@
 ---
-- name: Szenario 11 - Kommandozeilen Sabotage
+- name: Szenario 11 - Bashrc Sabotage (Login-Abbruch)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Setzt falsche Aliase in die .bashrc
-      ansible.builtin.lineinfile:
-        path: /home/praktikant/.bashrc
-        line: 'alias ls="echo '\''Zugriff verweigert: Systemfehler 0x88'\''"'
-        insertafter: EOF
+    - name: Exit-Befehl in die .bashrc des Users schreiben
+      ansible.builtin.shell: |
+        sudo bash -c 'echo "exit" >> /home/user/.bashrc'
