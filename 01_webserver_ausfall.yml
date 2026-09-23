@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Webserver Ausfall mit E-Mail-Ticket an Zammad
+- name: Szenario 1 - Alle 4 Zammad-Alternativwege testen
   hosts: ziel_vm
   become: yes
   
@@ -32,19 +32,57 @@
       async: 10
       poll: 0
 
-    - name: E-Mail-Ticket an Zammad senden (über SMTP / Mail-Gateway)
+    # --- WEG 1: IMAP / Zentraler Mailserver ---
+    - name: "Weg 1: Test - E-Mail an zentralen Mailserver senden"
       ansible.builtin.mail:
-        host: "10.86.100.116"
-        port: 25
-        from: "monitoring@aip-lab.ch"
-        to: "support@aip-lab.ch"
-        subject: "[ALERT #1024] Nginx Webserver Ausfall auf 10.80.49.125"
-        body: |
-          Kritischer Vorfall im Labor:
-          
-          System: 10.80.49.125
-          Dienst: Nginx Webserver
-          Status: Gestoppt / Autostart deaktiviert
-          
-          Bitte im Rahmen des ICT-Supports analysieren und beheben.
+        host: "mail.unternehmens-domain.ch"
+        port: 587
+        secure: tls
+        from: "aip-labor@aip-lab.ch"
+        to: "support@aip-test.ch"
+        subject: "[LABOR-ALERT] Nginx Ausfall auf 10.80.49.125"
+        body: "Automatisierter Labor-Vorfall: Webserver gestoppt."
+      ignore_errors: yes
+
+    # --- WEG 2: Shared Storage / Drop-Folder ---
+    - name: "Weg 2: Test - Ticket-Datei in Drop-Folder schreiben"
+      ansible.builtin.copy:
+        content: |
+          SYSTEM: 10.80.49.125
+          INCIDENT: Nginx Webserver Ausfall
+          STATUS: Gestoppt
+        dest: "/tmp/zammad_ticket_drop.txt"
+      ignore_errors: yes
+
+    # --- WEG 3: Relay-Server Webhook ---
+    - name: "Weg 3: Test - Webhook an Relay-Server senden"
+      ansible.builtin.uri:
+        url: "http://10.80.10.x:8080/relay-ticket"
+        method: POST
+        body_format: json
+        body:
+          ip: "10.80.49.125"
+          dienst: "nginx"
+          status: "stopped"
+        status_code: [200, 201]
+      ignore_errors: yes
+
+    # --- WEG 4: API-Call direkt über Semaphore (localhost) ---
+    - name: "Weg 4: Test - Zammad-API direkt von Semaphore aus aufrufen"
+      delegate_to: localhost
+      run_once: true
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body:
+          title: "Ausfall auf 10.80.49.125"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Labor-Alarm"
+            body: "Webserver gestoppt."
+        status_code: [200, 201]
       ignore_errors: yes
