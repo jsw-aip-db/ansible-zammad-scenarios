@@ -1,0 +1,68 @@
+Anleitung: Zammad API in Semaphore & Ansible integrieren
+
+Sobald du von Klaus oder Philipp die Zammad-URL und das API-Token erhalten hast, folgst du diesen Schritten, um die automatische Ticketerstellung scharfzuschalten.
+
+Schritt 1: Variablen in Semaphore hinterlegen
+
+Öffne Semaphore und wechsle in dein Projekt.
+
+Gehe links im Menü auf Environment (bzw. Variable Groups) und öffne deine Zammad-Variablen.
+
+Füge zwei neue Variablen hinzu (Typ: String oder Secret für das Token):
+
+Key: zammad_url | Value: https://[eure-zammad-url]/api/v1/tickets
+
+Key: zammad_token | Value: [DEIN_API_TOKEN]
+
+Klicke auf Save.
+
+Schritt 2: Sabotage-Playbooks in GitHub anpassen
+
+Du musst nun jedes der 11 Sabotage-Skripte (01_webserver_ausfall.yml bis 11_bashrc_sabotage.yml) in GitHub bearbeiten.
+
+Öffne z.B. 01_webserver_ausfall.yml im GitHub-Editor.
+
+Kopiere den Ansible-Task für die Zammad-API (aus deiner Vorlage) und füge ihn ganz unten an das Skript an. Achte auf die korrekte Einrückung!
+
+Ersetze die Felder title und body mit dem entsprechenden Text aus der Datei ticket_texte.txt.
+
+Speichere den Commit.
+
+Beispiel, wie das Ende der Datei 01_webserver_ausfall.yml dann aussieht:
+
+    - name: Webserver (Nginx) stoppen und deaktivieren
+      ansible.builtin.shell: |
+        sudo systemctl stop nginx || true
+        sudo systemctl disable nginx || true
+
+    - name: Zammad Ticket erstellen
+      ansible.builtin.uri:
+        url: "{{ zammad_url }}"
+        method: POST
+        headers:
+          Authorization: "Token token={{ zammad_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          title: "Kritisch: Interne Webseite nicht erreichbar"
+          group: "Users" 
+          customer: "training@labor.local" 
+          article:
+            subject: "Automatischer Sabotage-Alarm"
+            body: "Hallo Support-Team, die interne Webseite auf der VM 10.80.49.125 lädt nicht mehr. Der Browser meldet nur 'Connection refused' oder einen Timeout. Bitte dringend prüfen!"
+            type: "note"
+            internal: false
+        status_code: 201
+
+
+Schritt 3: In Semaphore testen
+
+Gehe in Semaphore zu deinen Task Templates.
+
+Führe den Task Sabotage: Szenario Webserver Ausfall aus.
+
+Wenn der Task grün wird, wechsle in das Zammad-Dashboard. Dort sollte jetzt magisch das erste Ticket aufgetaucht sein!
+
+Wiederhole Schritt 2 für die restlichen 10 Sabotage-Skripte.
+
+(Hinweis zur Heilung: Wenn gewünscht, kannst du später einen ähnlichen API-Call an die Heilungsskripte anhängen, um Tickets automatisch wieder zu schließen, sobald der Fehler behoben wurde.)
