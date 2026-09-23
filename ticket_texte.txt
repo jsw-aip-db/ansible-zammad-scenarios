@@ -1,47 +1,46 @@
-Hier sind die Vorlagen für die API-Bodys deiner 11 Skripte. Du kannst sie dir direkt in dein Dokument kopieren:
+=========================================================
+TICKET-TEXTE FÜR ZAMMAD API (SABOTAGE-SKRIPTE)
 
-1. Webserver Ausfall
-Titel: Hilfe, die interne Webseite lädt nicht mehr!
-Text: "Hallo Support-Team, seit heute Morgen bekomme ich nur noch eine Fehlermeldung, wenn ich unser Intranet aufrufen will. Gestern ging noch alles problemlos. Könnt ihr das bitte schnell prüfen?"
+--- SZENARIO 01: Webserver Ausfall ---
+title: "Kritisch: Interne Webseite nicht erreichbar"
+body: "Hallo Support-Team, die interne Webseite auf der VM 10.80.49.125 lädt nicht mehr. Der Browser meldet nur 'Connection refused' oder einen Timeout. Bitte dringend prüfen!"
 
-2. User Login gesperrt
-Titel: Komme nicht mehr in mein Konto (Terminal schließt sich)
-Text: "Hallo zusammen, mein Passwort wird anscheinend akzeptiert, aber das Terminal wirft mich sofort wieder raus. Wurde mein Account versehentlich deaktiviert?"
+--- SZENARIO 02: Login gesperrt ---
+title: "Login fehlgeschlagen: Account gesperrt"
+body: "Guten Tag, ich kann mich nicht mehr an der Ziel-VM (10.80.49.125) anmelden. Mein Passwort wird nicht akzeptiert und es scheint, als wäre der Account gesperrt worden."
 
-3. DNS Sabotage
-Titel: Das ganze Internet ist kaputt!
-Text: "Hallo, ich kann keine Webseiten mehr aufrufen! Wenn ich google.ch eingebe, passiert gar nichts. Ein Kollege meinte gerade, er kann IPs anpingen, aber Namen gehen nicht. Ich bin kein Techniker, bitte helft mir!"
+--- SZENARIO 03: DNS Sabotage ---
+title: "Keine Internetverbindung / DNS-Fehler"
+body: "Hallo, die Ziel-VM kann keine externen Webseiten mehr erreichen. Pings auf IP-Adressen funktionieren noch, aber Namen wie 'google.com' können nicht aufgelöst werden. Stimmt etwas mit dem DNS nicht?"
 
-4. fstab zerstört (Emergency Mode)
-Titel: Server startet nicht mehr (Schwarzer Bildschirm)
-Text: "Moin, der Test-Server hängt beim Hochfahren fest. Da steht irgendwas von 'Emergency Mode' und 'Press Enter for maintenance'. Ich hab mich nicht getraut, was zu drücken, nicht dass was gelöscht wird."
+--- SZENARIO 04: Fstab Emergency Mode ---
+title: "System bootet nur im Emergency Mode"
+body: "Wichtig: Nach dem letzten Neustart der VM 10.80.49.125 startet das System nicht mehr in die grafische Oberfläche. Auf der Konsole wird nur der 'Emergency Mode' (Notfallmodus) angezeigt. Wahrscheinlich ein Fehler beim Einhängen der Laufwerke."
 
-5. SSH-Zugang blockiert (Port verstellt)
-Titel: Verbindung verweigert bei SSH
-Text: "Hallo Support, ich versuche seit einer halben Stunde mich per SSH auf die Maschine zu verbinden, aber ich bekomme immer nur 'Connection refused'. Laufen die Server überhaupt noch?"
+--- SZENARIO 05: SSH Dienst ---
+title: "Kein Remote-Zugriff per SSH möglich"
+body: "Hallo, ich versuche mich per SSH auf die 10.80.49.125 zu verbinden, aber die Verbindung wird sofort abgelehnt ('Connection refused'). Läuft der SSH-Daemon auf dem Server?"
 
-6. Docker Restart-Loop
-Titel: Die App stürzt ständig ab (Docker)
-Text: "Hi, mein Docker-Container für das neue Projekt startet zwar kurz, bricht dann aber sofort wieder ab. Er hängt in einem Restart-Loop. Ich habe absolut nichts am Code geändert, versprochen!"
+--- SZENARIO 06: Docker Loop ---
+title: "Docker-Dienst offline / Container down"
+body: "Hallo Support, unsere Container-Umgebung auf der VM ist nicht erreichbar. Der Docker-Befehl wirft Fehler und der Daemon scheint nicht mehr zu laufen oder in einer Endlosschleife festzustecken."
 
-7. KI-Dienst offline (Ollama)
-Titel: Die lokale KI antwortet nicht mehr
-Text: "Hallo, wir wollten gerade unsere Prompts testen, aber das lokale Modell gibt uns immer einen Timeout. Ist der Server überlastet oder läuft Ollama im Hintergrund nicht mehr?"
+--- SZENARIO 07: KI / Ollama Offline ---
+title: "Lokale KI-Assistenz (Ollama) antwortet nicht"
+body: "Guten Tag, der lokale KI-Dienst (Ollama) nimmt keine Anfragen mehr entgegen. Die Schnittstelle läuft auf einen Timeout. Kann es sein, dass der Dienst gestoppt wurde?"
 
-8. Systemzeit verstellt (Zertifikats-Chaos)
-Titel: Sicherheitswarnungen im Browser / Hackangriff?
-Text: "Hallo! Egal welche HTTPS-Seite ich aufrufen will, mein Browser sagt 'Ihre Verbindung ist nicht privat' oder 'Zertifikat ungültig'. Wurden wir gehackt oder liegt das an unserem Netzwerk?"
+--- SZENARIO 08: NTP (Zeit verstellt) ---
+title: "Zertifikatsfehler und falsche Systemzeit"
+body: "Hallo, wir bekommen auf der VM plötzlich Zertifikatsfehler bei SSL-Verbindungen. Mir ist aufgefallen, dass das Datum und die Uhrzeit des Systems komplett falsch sind. Funktioniert der NTP-Sync nicht mehr?"
 
-9. Manipulierte Hosts-Datei
-Titel: Intranet-Seite wird nicht gefunden
-Text: "Hallo IT, ich kann ganz normal im Internet surfen, aber wenn ich 'intranet.aipplus.local' eingebe, sagt der Browser, die Seite existiert nicht. Bei meiner Kollegin nebenan geht es aber ohne Probleme."
+--- SZENARIO 09: Hosts (Lokale DNS) ---
+title: "Interne Dienste kommunizieren nicht / Localhost-Fehler"
+body: "Hallo Team, verschiedene interne Dienste auf der VM laufen auf Fehler. Es scheint, als ob Anfragen an 'localhost' ins Leere laufen oder falsch weitergeleitet werden."
 
-10. Sudo-Rechte entzogen
-Titel: Ich darf nichts mehr installieren
-Text: "Moin, ich wollte gerade die System-Updates fahren, aber Linux sagt mir plötzlich, ich sei nicht in der 'sudoers file'. Dieser Vorfall wird angeblich gemeldet. Wer hat mir meine Admin-Rechte geklaut?"
+--- SZENARIO 10: Sudo-Rechte entzogen ---
+title: "Fehlende Administrator-Rechte (Sudo)"
+body: "Guten Tag, wenn ich auf der VM arbeite und einen Befehl mit 'sudo' ausführen möchte, erhalte ich die Meldung, dass mein Benutzer nicht in der sudoers-Datei ist. Meine Admin-Rechte fehlen komplett."
 
-11. Kommandozeilen Sabotage (.bashrc)
-Titel: Mein Terminal spinnt komplett
-Text: "Hilfe, jedes Mal wenn ich den ganz normalen 'ls' Befehl für meine Ordner eintippe, kommt 'Zugriff verweigert: Systemfehler 0x88'. Ich habe nichts kaputt gemacht, das war nach dem Login plötzlich so!"
-
-Diese Texte kannst du später exakt so in den body:-Teil deiner Ansible-Skripte einfügen.
+--- SZENARIO 11: Bashrc Sabotage ---
+title: "Terminal schließt sich sofort nach Login"
+body: "Hilfe! Jedes Mal, wenn ich mich per SSH an der VM anmelde, schließt sich die Sitzung sofort nach der Eingabe des Passworts wieder von selbst. Ich komme gar nicht erst auf die Kommandozeile."
