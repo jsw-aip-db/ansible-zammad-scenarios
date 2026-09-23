@@ -1,5 +1,5 @@
 ---
-- name: Szenario 1 - Webserver Ausfall
+- name: Szenario 1 - Webserver Ausfall mit E-Mail-Ticket an Zammad
   hosts: ziel_vm
   become: yes
   
@@ -31,3 +31,20 @@
         '" > /dev/null 2>&1 &
       async: 10
       poll: 0
+
+    - name: E-Mail-Ticket an Zammad senden (über SMTP / Mail-Gateway)
+      ansible.builtin.mail:
+        host: "10.86.100.116"
+        port: 25
+        from: "monitoring@aip-lab.ch"
+        to: "support@aip-lab.ch"
+        subject: "[ALERT #1024] Nginx Webserver Ausfall auf 10.80.49.125"
+        body: |
+          Kritischer Vorfall im Labor:
+          
+          System: 10.80.49.125
+          Dienst: Nginx Webserver
+          Status: Gestoppt / Autostart deaktiviert
+          
+          Bitte im Rahmen des ICT-Supports analysieren und beheben.
+      ignore_errors: yes
