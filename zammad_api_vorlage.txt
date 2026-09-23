@@ -1,33 +1,56 @@
-zammad_api_vorlage.txt
+Zammad API Integration in Ansible
 
----
-- name: Szenario 1 - Webserver Ausfall
-  hosts: ziel_vm
-  become: yes 
-  
-  tasks:
-    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
-      ansible.builtin.service:
-        name: nginx
-        state: stopped
-        enabled: no
+Sobald du die Zugangsdaten für Zammad hast, trägst du in Semaphore unter der Environment-Gruppe Zammad-Variablen folgende Key-Value-Paare ein:
 
-    # --- HIER STARTET DER NEUE API TEIL ---
-    - name: Erstelle Ticket in Zammad via API
+zammad_url (z.B. https://support.firma.com/api/v1/tickets)
+
+zammad_token (Dein persönliches oder ein API-System-Token)
+
+Anschließend kannst du diese Task-Blöcke einfach ans Ende deiner jeweiligen Playbooks kopieren.
+
+1. Ticket erstellen (Ans Ende der SABOTAGE-Skripte anfügen)
+
+Füge diesen Block am Ende (unter die tasks:) deiner Sabotage-Playbooks ein. Er erstellt ein neues Ticket per HTTP POST.
+
+    - name: Zammad Ticket erstellen
       ansible.builtin.uri:
-        url: "http://<IP_VON_ZAMMAD>/api/v1/tickets"
+        url: "{{ zammad_url }}"
         method: POST
         headers:
-          Authorization: "Token token=<DEIN_API_TOKEN>"
+          Authorization: "Token token={{ zammad_token }}"
           Content-Type: "application/json"
         body_format: json
         body:
-          title: "Hilfe, die interne Webseite lädt nicht mehr!"
-          group: "Users"
-          customer: "lernender@aipplus.local"
+          title: "Automatisierter Alarm: Webserver offline" # Hier an das Szenario anpassen!
+          group: "Users" # Anpassen je nach Zammad-Konfiguration
+          customer: "training@labor.local" # Anpassen
           article:
-            subject: "Webserver down"
-            body: "Hallo Support-Team, seit meinem Login heute Morgen erreiche ich das Intranet nicht mehr. Könnt ihr das prüfen?"
-            type: "web"
+            subject: "Systemmeldung"
+            body: "Der Dienst auf der VM 10.80.49.125 ist ausgefallen. Bitte umgehend prüfen."
+            type: "note"
             internal: false
         status_code: 201
+
+
+2. Ticket schließen (Ans Ende der HEILUNG-Skripte anfügen)
+
+Hinweis: Um ein spezifisches Ticket zu schließen, muss Ansible normalerweise die Ticket-ID kennen. Da die VM aber nach einem Reset sauber ist, reicht es fürs Erste, wenn wir einfach eine Notiz an Zammad senden oder die Ticket-Erstellung weglassen. Falls wir Tickets gezielt schließen wollen, brauchen wir einen Weg, die Ticket-ID zwischenzuspeichern (z.B. in einer lokalen Datei auf der VM).
+
+Ein einfacher API-Call zum Schließen eines bekannten Tickets (z.B. Ticket ID 123) sieht so aus:
+
+    - name: Zammad Ticket schließen
+      ansible.builtin.uri:
+        url: "{{ zammad_url }}/123" # Die 123 muss dynamisch ausgelesen werden
+        method: PUT
+        headers:
+          Authorization: "Token token={{ zammad_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          state: "closed"
+          article:
+            subject: "Systemheilung"
+            body: "Das System wurde erfolgreich durch das Heilungs-Skript zurückgesetzt."
+            type: "note"
+            internal: false
+        status_code: 200
