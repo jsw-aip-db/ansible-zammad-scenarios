@@ -10,23 +10,23 @@
         state: stopped
         enabled: no
 
-    - name: Öffne ein neues Terminalfenster mit dem Alarm auf dem Desktop
+    - name: Öffne ein neues XFCE-Terminalfenster mit dem Alarm auf dem Desktop
       become_user: user
       environment:
         DISPLAY: ":0.0"
         XAUTHORITY: "/home/user/.Xauthority"
       ansible.builtin.shell: |
-        gnome-terminal -- bash -c '
-          echo -e "\033[1;31m====================================================================\033[0m"
-          echo -e "\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m"
-          echo -e "\033[1;31m====================================================================\033[0m"
-          echo " System:     10.80.49.125"
-          echo " Dienst:     Nginx Webserver (Gestoppt)"
-          echo ""
-          echo " AUFGABE: Analysieren Sie das Problem und beheben Sie den Ausfall!"
-          echo -e "\033[1;31m====================================================================\033[0m"
-          echo ""
-          echo "Drücke Enter, um dieses Terminal für die Diagnose zu nutzen..."
+        xfce4-terminal --command="bash -c '
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \" System:     10.80.49.125\"
+          echo \" Dienst:     Nginx Webserver (Gestoppt)\"
+          echo \"\"
+          echo \" AUFGABE: Analysieren Sie das Problem und beheben Sie den Ausfall!\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \"\"
+          echo \"Drücke Enter, um dieses Terminal für die Diagnose zu nutzen...\"
           read
-        '
+        '"
       ignore_errors: yes
