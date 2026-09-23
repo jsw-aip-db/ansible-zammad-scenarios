@@ -10,11 +10,10 @@
         state: stopped
         enabled: no
 
-    - name: Stilvolles Notfall-Banner auf dem Terminal hinterlegen
+    - name: Notfall-Banner in eine Textdatei im Home-Verzeichnis schreiben
       ansible.builtin.copy:
-        dest: "/etc/motd"
+        dest: "/home/user/README_INCIDENT.txt"
         content: |
-          
           ====================================================================
           🔴 CRITICAL INCIDENT ALERT - TICKET #1024
           ====================================================================
@@ -33,11 +32,3 @@
           2. Dokumentieren Sie die Schritte im Ticketsystem.
           3. Stellen Sie den Dienst wieder her und aktivieren Sie den Autostart.
           ====================================================================
-          
-    - name: Lokales Notfall-Ticket als Backup im Temp-Ordner ablegen
-      ansible.builtin.copy:
-        dest: "/tmp/ict_support_ticket_01.txt"
-        content: |
-          Ticket-ID: #1024
-          Fehler: Webserver Ausfall
-          Timestamp: {{ ansible_date_time.iso8601 }}
