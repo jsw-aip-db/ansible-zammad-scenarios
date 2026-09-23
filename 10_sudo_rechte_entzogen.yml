@@ -1,9 +1,9 @@
 ---
-- name: Szenario 10 - Sudo-Rechte entzogen
+- name: Szenario 10 - Sudo Sabotage (Rechte entziehen)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Entfernt den Standard-User aus der sudo-Gruppe
-      ansible.builtin.command: gpasswd -d praktikant sudo
-      ignore_errors: yes # Falls er schon entfernt wurde
+    - name: Benutzer 'user' aus der Sudo-Gruppe entfernen
+      ansible.builtin.shell: |
+        sudo gpasswd -d user sudo || true
