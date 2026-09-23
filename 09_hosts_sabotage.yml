@@ -1,11 +1,9 @@
 ---
-- name: Szenario 9 - Manipulierte Hosts-Datei
+- name: Szenario 9 - Hosts Sabotage (Lokale DNS manipulieren)
   hosts: ziel_vm
   become: yes
-  
+
   tasks:
-    - name: Leitet wichtige Domains lokal ins Nichts um
-      ansible.builtin.lineinfile:
-        path: /etc/hosts
-        line: '127.0.0.1 intranet.aipplus.local zammad.aipplus.local'
-        insertafter: EOF
+    - name: Falsche IP für localhost in /etc/hosts erzwingen
+      ansible.builtin.shell: |
+        sudo bash -c 'echo "10.99.99.99 localhost" > /etc/hosts'
