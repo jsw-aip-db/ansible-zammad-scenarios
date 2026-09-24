@@ -4,8 +4,10 @@
   become: yes
   
   tasks:
-    - name: Sperre den Testbenutzer über explizites sudo
-      ansible.builtin.shell: sudo passwd -l user
+    - name: Sperrt den User-Account
+      ansible.builtin.user:
+        name: user
+        password_lock: yes
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
@@ -18,9 +20,9 @@
           echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1025 (Login gesperrt)\033[0m\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \" System:     10.80.49.125\"
-          echo \" Vorfall:    Benutzerkonto gesperrt / Login nicht möglich\"
+          echo \" Vorfall:    Benutzeraccount (user) ist gesperrt\"
           echo \"\"
-          echo \" AUFGABE: Analysieren Sie das Problem und entsperren Sie den Account!\"
+          echo \" AUFGABE: Entsperren Sie den Account, damit ein Login wieder möglich ist!\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \"\"
           echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
@@ -28,25 +30,3 @@
         '" > /dev/null 2>&1 &
       async: 10
       poll: 0
-
-- name: Szenario 2 - Ticket bei Zammad via Semaphore anlegen
-  hosts: localhost
-  connection: local
-  gather_facts: no
-
-  tasks:
-    - name: Zammad API-Call direkt vom Semaphore-Server senden
-      ansible.builtin.uri:
-        url: "http://10.86.100.116:8080/api/v1/tickets"
-        method: POST
-        body_format: json
-        headers:
-          Content-Type: "application/json"
-        body:
-          title: "Login gesperrt auf 10.80.49.125"
-          group: "Users"
-          customer: "support@aip-test.ch"
-          article:
-            subject: "Labor-Alarm Szenario 2"
-            body: "Das Benutzerkonto auf 10.80.49.125 wurde gesperrt."
-        status_code: [200, 201]
