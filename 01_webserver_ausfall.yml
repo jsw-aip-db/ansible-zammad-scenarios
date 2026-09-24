@@ -21,9 +21,9 @@
           echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1024 (Webserver Ausfall)\033[0m\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \" System:     10.80.49.125\"
-          echo \" Dienst:     Nginx Webserver (Gestoppt)\"
+          echo \" Vorfall:    Interner Webserver (Nginx) reagiert nicht\"
           echo \"\"
-          echo \" AUFGABE: Analysieren Sie das Problem und beheben Sie den Ausfall!\"
+          echo \" AUFGABE: Analysieren Sie den Dienststatus und starten Sie den Webserver!\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \"\"
           echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
@@ -31,25 +31,3 @@
         '" > /dev/null 2>&1 &
       async: 10
       poll: 0
-
-- name: Szenario 1 - Ticket bei Zammad via Semaphore anlegen
-  hosts: localhost
-  connection: local
-  gather_facts: no
-
-  tasks:
-    - name: Zammad API-Call direkt vom Semaphore-Server senden
-      ansible.builtin.uri:
-        url: "http://10.86.100.116:8080/api/v1/tickets"
-        method: POST
-        body_format: json
-        headers:
-          Content-Type: "application/json"
-        body:
-          title: "Webserver Ausfall auf 10.80.49.125"
-          group: "Users"
-          customer: "support@aip-test.ch"
-          article:
-            subject: "Labor-Alarm Szenario 1"
-            body: "Der Nginx Webserver auf 10.80.49.125 wurde im Rahmen des ICT-Support-Labors gestoppt."
-        status_code: [200, 201]
