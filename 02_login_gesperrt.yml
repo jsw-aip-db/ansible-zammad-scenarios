@@ -1,9 +1,54 @@
 ---
-- name: Szenario 2 - Login Sabotage (User sperren)
+- name: Szenario 2 - Login gesperrt (VM Sabotage & Desktop Popup)
   hosts: ziel_vm
   become: yes
+  
+  tasks:
+    - name: Sperre den Testbenutzer (Login verhindern)
+      ansible.builtin.user:
+        name: user
+        password_lock: yes
+
+    - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
+      become_user: user
+      environment:
+        DISPLAY: ":0.0"
+        XAUTHORITY: "/home/user/.Xauthority"
+      ansible.builtin.shell: |
+        xfce4-terminal --maximize --command="bash -c '
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1025 (Login gesperrt)\033[0m\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \" System:     10.80.49.125\"
+          echo \" Vorfall:    Benutzerkonto gesperrt / Login nicht möglich\"
+          echo \"\"
+          echo \" AUFGABE: Analysieren Sie das Problem und entsperren Sie den Account!\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \"\"
+          echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
+          read
+        '" > /dev/null 2>&1 &
+      async: 10
+      poll: 0
+
+- name: Szenario 2 - Ticket bei Zammad via Semaphore anlegen
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
   tasks:
-    - name: Account sperren durch ungültige Login-Versuche oder usermod
-      ansible.builtin.shell: |
-        passwd -l user || true
+    - name: Zammad API-Call direkt vom Semaphore-Server senden
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body:
+          title: "Login gesperrt auf 10.80.49.125"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Labor-Alarm Szenario 2"
+            body: "Das Benutzerkonto auf 10.80.49.125 wurde gesperrt."
+        status_code: [200, 201]
