@@ -1,9 +1,55 @@
 ---
-- name: Szenario 4 - Fstab Sabotage (Emergency Mode)
+- name: Szenario 4 - fstab Fehler (VM Sabotage & Desktop Popup)
   hosts: ziel_vm
   become: yes
+  
+  tasks:
+    - name: Sabotiere die fstab (Erzwingt Emergency Mode beim nächsten Boot)
+      # Ersetze diesen shell-Befehl ggf. mit deinem bisherigen fstab-Sabotage-Code:
+      ansible.builtin.shell: |
+        echo "UUID=deadbeef-dead-beef-dead-beef00000000 /mnt/fehler ext4 defaults 0 2" | sudo tee -a /etc/fstab > /dev/null
+
+    - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
+      become_user: user
+      environment:
+        DISPLAY: ":0.0"
+        XAUTHORITY: "/home/user/.Xauthority"
+      ansible.builtin.shell: |
+        xfce4-terminal --maximize --command="bash -c '
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1027 (fstab Fehler)\033[0m\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \" System:     10.80.49.125\"
+          echo \" Vorfall:    Korrupte Dateisystemtabelle (Emergency Mode droht)\"
+          echo \"\"
+          echo \" AUFGABE: Analysieren Sie die /etc/fstab und beheben Sie den Fehler!\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \"\"
+          echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
+          read
+        '" > /dev/null 2>&1 &
+      async: 10
+      poll: 0
+
+- name: Szenario 4 - Ticket bei Zammad via Semaphore anlegen
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  become: no
 
   tasks:
-    - name: Fehlerhaften Mount-Eintrag in fstab schreiben
-      ansible.builtin.shell: |
-        sudo bash -c 'echo "/dev/nonexistent /mnt/ungueltig ext4 defaults 0 0" >> /etc/fstab'
+    - name: Zammad API-Call direkt vom Semaphore-Server senden
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body:
+          title: "Dateisystem/fstab fehlerhaft auf 10.80.49.125"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Labor-Alarm Szenario 4"
+            body: "Die Datei /etc/fstab auf 10.80.49.125 enthält fehlerhafte Einträge. Ein Neustart wird das System in den Emergency Mode versetzen."
+        status_code: [200, 201]
