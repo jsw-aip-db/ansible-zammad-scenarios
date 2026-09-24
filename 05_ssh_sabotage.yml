@@ -26,31 +26,7 @@
       async: 10
       poll: 0
 
-    - name: Stoppt den SSH Dienst und deaktiviert den Autostart
-      ansible.builtin.service:
-        name: ssh
-        state: stopped
-        enabled: no
-
-- name: Szenario 5 - Ticket bei Zammad via Semaphore anlegen
-  hosts: localhost
-  connection: local
-  gather_facts: no
-  become: no
-
-  tasks:
-    - name: Zammad API-Call direkt vom Semaphore-Server senden
-      ansible.builtin.uri:
-        url: "http://10.86.100.116:8080/api/v1/tickets"
-        method: POST
-        body_format: json
-        headers:
-          Content-Type: "application/json"
-        body:
-          title: "SSH-Dienst offline auf 10.80.49.125"
-          group: "Users"
-          customer: "support@aip-test.ch"
-          article:
-            subject: "Labor-Alarm Szenario 5"
-            body: "Der SSH-Zugriff auf 10.80.49.125 ist nicht mehr möglich. Der Dienst wurde gestoppt."
-        status_code: [200, 201]
+    - name: Stoppt den SSH Dienst zeitverzögert, damit Ansible sauber beenden kann
+      ansible.builtin.shell: sleep 2 && systemctl stop ssh
+      async: 10
+      poll: 0
