@@ -26,8 +26,6 @@
       async: 10
       poll: 0
 
-    - name: Stoppt und maskiert SSH radikal im Hintergrund (entkoppelt von Ansible)
+    - name: Übergebe den SSH-Kill an systemd (immun gegen Ansible-Abbrüche)
       ansible.builtin.shell: |
-        nohup bash -c 'sleep 3 && systemctl mask ssh.socket ssh.service && systemctl stop ssh.socket ssh.service && pkill sshd' > /dev/null 2>&1 &
-      async: 10
-      poll: 0
+        systemd-run --on-active=3 /bin/bash -c "systemctl mask ssh.socket ssh.service; systemctl stop ssh.socket ssh.service; pkill sshd"
