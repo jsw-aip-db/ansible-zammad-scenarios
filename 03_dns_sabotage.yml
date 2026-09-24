@@ -5,7 +5,6 @@
   
   tasks:
     - name: Sabotiere die DNS-Auflösung (Setzt falschen Nameserver)
-      # Füge hier deinen bestehenden DNS-Sabotage-Befehl ein, z.B.:
       ansible.builtin.shell: |
         echo "nameserver 127.0.0.254" | sudo tee /etc/resolv.conf > /dev/null
 
@@ -35,6 +34,7 @@
   hosts: localhost
   connection: local
   gather_facts: no
+  become: no
 
   tasks:
     - name: Zammad API-Call direkt vom Semaphore-Server senden
