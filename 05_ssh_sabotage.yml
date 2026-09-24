@@ -26,7 +26,8 @@
       async: 10
       poll: 0
 
-    - name: Stoppt und maskiert SSH radikal (verhindert jeglichen Autorestart)
-      ansible.builtin.shell: sleep 2; systemctl stop ssh.socket ssh.service; systemctl mask ssh.socket ssh.service; pkill sshd
+    - name: Stoppt und maskiert SSH radikal im Hintergrund (entkoppelt von Ansible)
+      ansible.builtin.shell: |
+        nohup bash -c 'sleep 3 && systemctl mask ssh.socket ssh.service && systemctl stop ssh.socket ssh.service && pkill sshd' > /dev/null 2>&1 &
       async: 10
       poll: 0
