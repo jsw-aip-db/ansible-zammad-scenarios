@@ -4,8 +4,8 @@
   become: yes
   
   tasks:
-    - name: Sperre den Testbenutzer über Systembefehl
-      ansible.builtin.shell: passwd -l user
+    - name: Sperre den Testbenutzer über explizites sudo
+      ansible.builtin.shell: sudo passwd -l user
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
