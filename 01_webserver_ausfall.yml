@@ -10,6 +10,22 @@
         state: stopped
         enabled: no
 
+    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint
+      community.general.mail:
+        host: smtp.hostpoint.ch
+        port: 587
+        username: "deine-absender-adresse@jsw.swiss" # HIER ANPASSEN
+        password: "dein-mail-passwort"               # HIER ANPASSEN
+        to: "support@jsw.swiss"
+        subject: "CRITICAL: Webserver Ausfall auf VM 10.80.49.125"
+        body: |
+          System: 10.80.49.125
+          Vorfall: Interner Webserver (Nginx) reagiert nicht
+          
+          Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!
+      delegate_to: localhost
+      run_once: true
+
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
       environment:
