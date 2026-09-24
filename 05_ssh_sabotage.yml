@@ -26,7 +26,7 @@
       async: 10
       poll: 0
 
-    - name: Stoppt den SSH Dienst zeitverzögert, damit Ansible sauber beenden kann
-      ansible.builtin.shell: sleep 2 && systemctl stop ssh
+- name: Stoppt den SSH Dienst und Socket zeitverzögert
+      ansible.builtin.shell: sleep 2 && systemctl stop ssh.socket ssh.service
       async: 10
       poll: 0
