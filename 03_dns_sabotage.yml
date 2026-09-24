@@ -1,9 +1,54 @@
 ---
-- name: Szenario 3 - DNS Sabotage
+- name: Szenario 3 - DNS Fehler (VM Sabotage & Desktop Popup)
   hosts: ziel_vm
   become: yes
+  
+  tasks:
+    - name: Sabotiere die DNS-Auflösung (Setzt falschen Nameserver)
+      # Füge hier deinen bestehenden DNS-Sabotage-Befehl ein, z.B.:
+      ansible.builtin.shell: |
+        echo "nameserver 127.0.0.254" | sudo tee /etc/resolv.conf > /dev/null
+
+    - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
+      become_user: user
+      environment:
+        DISPLAY: ":0.0"
+        XAUTHORITY: "/home/user/.Xauthority"
+      ansible.builtin.shell: |
+        xfce4-terminal --maximize --command="bash -c '
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1026 (DNS Fehler)\033[0m\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \" System:     10.80.49.125\"
+          echo \" Vorfall:    Keine Namensauflösung möglich (Internet gestört)\"
+          echo \"\"
+          echo \" AUFGABE: Analysieren Sie die Netzwerkkonfiguration und beheben Sie den DNS-Fehler!\"
+          echo -e \"\033[1;31m====================================================================\033[0m\"
+          echo \"\"
+          echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
+          read
+        '" > /dev/null 2>&1 &
+      async: 10
+      poll: 0
+
+- name: Szenario 3 - Ticket bei Zammad via Semaphore anlegen
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
   tasks:
-    - name: Ungültigen DNS-Server erzwingen
-      ansible.builtin.shell: |
-        sudo bash -c 'echo "nameserver 10.99.99.99" > /etc/resolv.conf'
+    - name: Zammad API-Call direkt vom Semaphore-Server senden
+      ansible.builtin.uri:
+        url: "http://10.86.100.116:8080/api/v1/tickets"
+        method: POST
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+        body:
+          title: "DNS-Auflösung fehlerhaft auf 10.80.49.125"
+          group: "Users"
+          customer: "support@aip-test.ch"
+          article:
+            subject: "Labor-Alarm Szenario 3"
+            body: "Die DNS-Namensauflösung auf 10.80.49.125 funktioniert nicht mehr. Externe und interne Hostnamen können nicht aufgelöst werden."
+        status_code: [200, 201]
