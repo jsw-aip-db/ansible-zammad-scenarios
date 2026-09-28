@@ -4,10 +4,11 @@
   become: yes
   
   tasks:
-    - name: Erstelle Zammad-Ticket via E-Mail an internen Zammad/SMTP-Server
+    - name: Erstelle Zammad-Ticket über internen Zammad-Server (Port 465 SSL)
       community.general.mail:
         host: "10.86.100.116"
-        port: 25
+        port: 465
+        secure: always
         username: "{{ smtp_user }}"
         password: "{{ smtp_password }}"
         to: "support@aip-test.ch"
