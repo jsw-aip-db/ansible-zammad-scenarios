@@ -4,9 +4,9 @@
   become: yes
   
   tasks:
-    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint (Delegiert an Semaphore)
+    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint (Delegiert an Semaphore via IPv4)
       community.general.mail:
-        host: "asmtp.mail.hostpoint.ch"
+        host: "217.26.52.55"
         port: 587
         secure: starttls
         username: "{{ smtp_user }}"
