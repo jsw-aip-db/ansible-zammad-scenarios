@@ -4,11 +4,11 @@
   become: yes
   
   tasks:
-    - name: Erstelle Zammad-Ticket über internen Zammad-Server (Port 465 SSL)
+    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint direkt von der VM
       community.general.mail:
-        host: "10.86.100.116"
-        port: 465
-        secure: always
+        host: "asmtp.mail.hostpoint.ch"
+        port: 587
+        secure: starttls
         username: "{{ smtp_user }}"
         password: "{{ smtp_password }}"
         to: "support@aip-test.ch"
@@ -18,9 +18,7 @@
           Vorfall: Interner Webserver (Nginx) reagiert nicht
           
           Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!
-      delegate_to: localhost
       run_once: true
-      become: no
 
     - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
       ansible.builtin.service:
