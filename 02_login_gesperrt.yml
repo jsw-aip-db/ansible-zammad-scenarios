@@ -4,10 +4,36 @@
   become: yes
   
   tasks:
-    - name: Sperrt den User-Account
+    - name: Erstelle Zammad-Ticket via lokalem Postfix auf der VM (Login gesperrt)
+      ansible.builtin.shell: |
+        python3 -c "
+        import smtplib
+        from email.message import EmailMessage
+
+        msg = EmailMessage()
+        msg['Subject'] = 'CRITICAL: Login gesperrt auf VM 10.80.49.125'
+        msg['From'] = 'support@aip-test.ch'
+        msg['To'] = 'support@aip-test.ch'
+        msg.set_content('''System: 10.80.49.125
+        Vorfall: Benutzer-Login ist gesperrt / Authentifizierungsfehler
+        
+        Bitte überprüfen Sie die Login-Dienste und PAM-Konfiguration!''')
+
+        with smtplib.SMTP('127.0.0.1', 25) as server:
+            server.send_message(msg)
+            print('Erfolgreich via lokalem Postfix gesendet')
+        "
+      register: postfix_mail_result
+      run_once: true
+
+    - name: Zeige das Ergebnis des Postfix-Mailversands
+      ansible.builtin.debug:
+        msg: "{{ postfix_mail_result.stdout_lines }}"
+
+    - name: Sperre den Login (z.B. durch Deaktivieren/Ändern der Shell des Test-Users oder PAM-Eingriff - beispielhaft angepasst)
       ansible.builtin.user:
         name: user
-        password_lock: yes
+        shell: /bin/false
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
@@ -20,9 +46,9 @@
           echo -e \"\033[1;31m🔴 CRITICAL INCIDENT ALERT - TICKET #1025 (Login gesperrt)\033[0m\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \" System:     10.80.49.125\"
-          echo \" Vorfall:    Benutzeraccount (user) ist gesperrt\"
+          echo \" Vorfall:    Benutzer-Login ist gesperrt\"
           echo \"\"
-          echo \" AUFGABE: Entsperren Sie den Account, damit ein Login wieder möglich ist!\"
+          echo \" AUFGABE: Entsperren Sie den Zugang und prüfen Sie die Authentifizierung!\"
           echo -e \"\033[1;31m====================================================================\033[0m\"
           echo \"\"
           echo \"Drücke Enter, wenn du dieses Fenster schliessen willst...\"
