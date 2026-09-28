@@ -4,18 +4,12 @@
   become: yes
   
   tasks:
-    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
-      ansible.builtin.service:
-        name: nginx
-        state: stopped
-        enabled: no
-
-    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint
+    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint (von der Ziel-VM gesendet)
       community.general.mail:
         host: smtp.hostpoint.ch
         port: 587
-        username: "deine-absender-adresse@jsw.swiss" # HIER ANPASSEN
-        password: "dein-mail-passwort"               # HIER ANPASSEN
+        username: "{{ smtp_user }}"
+        password: "{{ smtp_password }}"
         to: "support@jsw.swiss"
         subject: "CRITICAL: Webserver Ausfall auf VM 10.80.49.125"
         body: |
@@ -23,8 +17,12 @@
           Vorfall: Interner Webserver (Nginx) reagiert nicht
           
           Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!
-      delegate_to: localhost
-      run_once: true
+
+    - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+        enabled: no
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
