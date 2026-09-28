@@ -19,6 +19,7 @@
           Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!
       delegate_to: localhost
       run_once: true
+      become: no
 
     - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
       ansible.builtin.service:
