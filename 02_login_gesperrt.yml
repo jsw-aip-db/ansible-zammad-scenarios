@@ -30,10 +30,8 @@
       ansible.builtin.debug:
         msg: "{{ postfix_mail_result.stdout_lines }}"
 
-    - name: Sperre den Login des Users (Shell ändern)
-      ansible.builtin.command: chsh -s /bin/false user
-      register: chsh_result
-      changed_when: chsh_result.rc == 0
+    - name: Sperre den Login des Users über usermod
+      ansible.builtin.shell: usermod -s /bin/false user
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
