@@ -4,7 +4,7 @@
   become: yes
   
   tasks:
-    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint (von der Ziel-VM gesendet)
+    - name: Erstelle Zammad-Ticket via E-Mail an Hostpoint (Delegiert an Semaphore)
       community.general.mail:
         host: smtp.hostpoint.ch
         port: 587
@@ -17,6 +17,8 @@
           Vorfall: Interner Webserver (Nginx) reagiert nicht
           
           Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!
+      delegate_to: localhost
+      run_once: true
 
     - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
       ansible.builtin.service:
