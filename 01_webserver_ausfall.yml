@@ -4,32 +4,6 @@
   become: yes
   
   tasks:
-    - name: Installiere Postfix lokal auf der VM (Non-interactive)
-      ansible.builtin.debconf:
-        name: postfix
-        question: 'postfix/mailname'
-        value: 'aip-test.local'
-        vtype: 'string'
-
-    - name: Setze Postfix-Konfiguration auf Local-only
-      ansible.builtin.debconf:
-        name: postfix
-        question: 'postfix/main_mailer_type'
-        value: 'Local only'
-        vtype: 'select'
-
-    - name: Installiere Postfix Paket
-      ansible.builtin.apt:
-        name: postfix
-        state: present
-        update_cache: yes
-
-    - name: Stelle sicher, dass der Postfix-Dienst läuft und aktiviert ist
-      ansible.builtin.service:
-        name: postfix
-        state: started
-        enabled: yes
-
     - name: Erstelle Zammad-Ticket via lokalem Postfix auf der VM
       ansible.builtin.shell: |
         python3 -c "
