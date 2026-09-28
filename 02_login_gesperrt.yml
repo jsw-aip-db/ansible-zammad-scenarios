@@ -30,10 +30,8 @@
       ansible.builtin.debug:
         msg: "{{ postfix_mail_result.stdout_lines }}"
 
-    - name: Sperre den Login (z.B. durch Deaktivieren/Ändern der Shell des Test-Users oder PAM-Eingriff - beispielhaft angepasst)
-      ansible.builtin.user:
-        name: user
-        shell: /bin/false
+    - name: Sperre den Login des Users über usermod mit sudo
+      ansible.builtin.shell: chsh -s /bin/false user
 
     - name: Öffne maximiertes XFCE-Terminal im Hintergrund auf der VM
       become_user: user
