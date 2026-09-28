@@ -4,7 +4,33 @@
   become: yes
   
   tasks:
-    - name: Erstelle Zammad-Ticket via lokalem Python-SMTP-Versand auf der VM
+    - name: Installiere Postfix lokal auf der VM (Non-interactive)
+      ansible.builtin.debconf:
+        name: postfix
+        question: 'postfix/mailname'
+        value: 'aip-test.local'
+        vtype: 'string'
+
+    - name: Setze Postfix-Konfiguration auf Local-only
+      ansible.builtin.debconf:
+        name: postfix
+        question: 'postfix/main_mailer_type'
+        value: 'Local only'
+        vtype: 'select'
+
+    - name: Installiere Postfix Paket
+      ansible.builtin.apt:
+        name: postfix
+        state: present
+        update_cache: yes
+
+    - name: Stelle sicher, dass der Postfix-Dienst läuft und aktiviert ist
+      ansible.builtin.service:
+        name: postfix
+        state: started
+        enabled: yes
+
+    - name: Erstelle Zammad-Ticket via lokalem Postfix auf der VM
       ansible.builtin.shell: |
         python3 -c "
         import smtplib
@@ -19,20 +45,16 @@
         
         Bitte analysieren Sie den Dienststatus und starten Sie den Webserver!''')
 
-        try:
-            # Versuch über lokalen SMTP-Dienst
-            with smtplib.SMTP('127.0.0.1', 25, timeout=5) as server:
-                server.send_message(msg)
-                print('Erfolgreich via lokalem SMTP gesendet')
-        except Exception as e:
-            print(f'Lokaler SMTP fehlgeschlagen: {e}')
+        with smtplib.SMTP('127.0.0.1', 25) as server:
+            server.send_message(msg)
+            print('Erfolgreich via lokalem Postfix gesendet')
         "
-      register: python_mail_result
+      register: postfix_mail_result
       run_once: true
 
-    - name: Zeige das Ergebnis des Mailversands
+    - name: Zeige das Ergebnis des Postfix-Mailversands
       ansible.builtin.debug:
-        msg: "{{ python_mail_result.stdout_lines }}"
+        msg: "{{ postfix_mail_result.stdout_lines }}"
 
     - name: Stoppt den Nginx Webserver und deaktiviert den Autostart
       ansible.builtin.service:
